@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.env
+*.sqlite
+*.db
+*.sqlite3
+
+# VSCode
+.vscode/
+
+# Alembic
+alembic/versions/*.pyc
+
+# Byte-compiled / cache files
+*.log
+*.tmp
+
+# Pytest / testing
+.pytest_cache/
