@@ -39,7 +39,10 @@ def get_tasks(db: Session):
 
 # Створення завдання
 def create_task(db: Session, task: schemas.TaskCreate, category_id: int):
-    db_task = models.Task(title=task.title, category_id=category_id)
+    category = db.query(models.Category).filter(models.Category.id == category_id).first()
+    if not category:
+         raise HTTPException(status_code=404, detail="Category not found")
+    db_task = models.Task(title=task.title,description=task.description, category_id=category_id)
     db.add(db_task)
     db.commit()
     db.refresh(db_task)
