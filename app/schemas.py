@@ -1,37 +1,48 @@
 from pydantic import BaseModel, ConfigDict
 from typing import Optional, List
+from datetime import date
 
-class Category(BaseModel):
-    id: int
-    name: str
-    model_config = ConfigDict(from_attributes=True)
-    
-class Task(BaseModel):
-    id: int
-    title: str 
-    description: Optional[str] = None
-    is_done: bool  
-    category_id: Optional[int] = None
-    model_config = ConfigDict(from_attributes=True)
-
-class CategoryCreate(BaseModel):
+class CategoryBase(BaseModel):
     name: str
 
-class TaskCreate(BaseModel):
+
+class CategoryCreate(CategoryBase):
+    pass
+
+
+class Category(CategoryBase):
+    id: int
+    model_config = ConfigDict(from_attributes=True)
+
+
+class TaskBase(BaseModel):
     title: str
     description: Optional[str] = None
+    deadline: Optional[date] = None   
 
-class TaskList(BaseModel):
-    all: list[Task]
-    completed: list[Task]
-    unfulfilled: list[Task]
+
+class TaskCreate(TaskBase):
+    category_id: int   
+
 
 class TaskUpdate(BaseModel):
-    is_done: bool
+    title: Optional[str] = None
+    description: Optional[str] = None
+    status: Optional[str] = None
+    deadline: Optional[date] = None   
+
+
+class Task(TaskBase):
+    id: int
+    status: str
+    category_id: int
+    model_config = ConfigDict(from_attributes=True)
+
 
 class DeletedCategory(BaseModel):
     deleted_category: Category
-    deleted_tasks: list[Task]
+    deleted_tasks: List[Task]
+
 
 class DeletedTasks(BaseModel):
-    deleted_tasks: list[Task]
+    deleted_tasks: List[Task]
