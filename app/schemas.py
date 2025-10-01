@@ -1,5 +1,5 @@
 from pydantic import BaseModel, ConfigDict
-from typing import Optional, List
+from typing import Optional, List, Literal
 from datetime import date
 
 class CategoryBase(BaseModel):
@@ -22,13 +22,17 @@ class TaskBase(BaseModel):
 
 
 class TaskCreate(TaskBase):
-    category_id: int   
+    category_id: int 
+    status: Literal["new", "in_progress", "done"] = "new"
+    
+class TaskStatusUpdate(BaseModel):
+    status: Literal["new", "in_progress", "done"] 
 
 
 class TaskUpdate(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
-    status: Optional[str] = None
+    status: Optional[Literal["new", "in_progress", "done"]] = None
     deadline: Optional[date] = None   
 
 
