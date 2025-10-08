@@ -3,7 +3,7 @@ from . import models, schemas
 from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
 from datetime import date
-from typing import Literal
+from typing import Literal, Optional
 # Отримання списку категорій
 def get_categories(db: Session):
     return db.query(models.Category).all()
@@ -32,36 +32,37 @@ def delete_category(db: Session, category_id: int):
     
 
 # Отримання списку завдань з фільтрами: всі, нові, в процесі, завершені, по даті
-def get_tasks(db: Session, deadline: date = None, status: Literal["new", "in_progress", "done"] = None):
-    tasks = {
+def get_tasks(db: Session, deadline: Optional[date] = None, status: Optional[Literal["new","in_progress","done"]] = None):
+    result = {
         "all": db.query(models.Task).all(),
         "new": db.query(models.Task).filter(models.Task.status == "new").all(),
-        "in progress": db.query(models.Task).filter(models.Task.status == "in_progress").all(),
+        "in_progress": db.query(models.Task).filter(models.Task.status == "in_progress").all(),
         "done": db.query(models.Task).filter(models.Task.status == "done").all(),
     }
 
     if deadline:
-        tasks[f"on date {deadline}"] = db.query(models.Task).filter(models.Task.deadline == deadline).all()
+        result["by_deadline"] = db.query(models.Task).filter(models.Task.deadline == deadline).all()
     if status:
-        tasks[f"by status: {status}"] = db.query(models.Task).filter(models.Task.status == status).all()
+        result["by_status"] = db.query(models.Task).filter(models.Task.status == status).all()
     if deadline and status:
-        tasks[f"on {deadline} & status: {status}"] = db.query(models.Task).filter(
+        result["by_deadline_and_status"] = db.query(models.Task).filter(
             models.Task.deadline == deadline,
             models.Task.status == status
         ).all()
 
-    return tasks
+    return result
+
 
 # Створення завдання
-def create_task(db: Session, task: schemas.TaskCreate):
-    category = db.query(models.Category).filter(models.Category.id == task.category_id).first()
+def create_task(db: Session, task: schemas.TaskCreate, category_id: int):
+    category = db.query(models.Category).filter(models.Category.id == category_id).first()
     if not category:
         raise HTTPException(status_code=404, detail="Category not found")
 
     db_task = models.Task(
         title=task.title,
         description=task.description,
-        category_id=task.category_id,
+        category_id=category_id,  
         status=task.status,
         deadline=task.deadline
     )
