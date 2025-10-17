@@ -5,8 +5,8 @@ from app import crud
 
 db = SessionLocal()
 
-# Припустимо, хочемо видалити завдання з id=9
-task_id = 9
+#Видаляємо завдання з id=7
+task_id = 7
 deleted_task = crud.delete_task(db, task_id=task_id)
 
 if deleted_task:

@@ -4,7 +4,7 @@ from app.database import SessionLocal
 from app import crud
 
 db = SessionLocal()
-#видаляємо 6 категорію
+#видаляємо 7 категорію
 category_id = 7
 deleted_category = crud.delete_category(db, category_id=category_id)
 

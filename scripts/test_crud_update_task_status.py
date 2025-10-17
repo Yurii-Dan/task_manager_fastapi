@@ -5,10 +5,10 @@ from app import crud
 
 db = SessionLocal()
 
-# Припустимо, ми хочемо оновити завдання з id=9
-task_id = 9
-updated_task = crud.update_task_status(db, task_id=task_id, is_done=True)
+# Припустимо, ми хочемо оновити завдання з id=7
+task_id = 7
+updated_task = crud.update_task_status(db, task_id=task_id, status="done")
 
-print(f"Task {updated_task.id} - {updated_task.title} status updated to {updated_task.is_done}")
+print(f"Task {updated_task.id} - {updated_task.title} status updated to {updated_task.status}")
 
 db.close()
