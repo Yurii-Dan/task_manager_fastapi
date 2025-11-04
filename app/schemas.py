@@ -1,6 +1,6 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, EmailStr
 from typing import Optional, List, Literal
-from datetime import date
+from datetime import date, datetime
 from pydantic import Field
 
 class CategoryBase(BaseModel):
@@ -19,8 +19,8 @@ class Category(CategoryBase):
 class TaskBase(BaseModel):
     title: str
     description: Optional[str] = None
-    deadline: Optional[date] = Field(None, example="2025-02-10") #підказка як в swagger вводити дату   
-
+    deadline: Optional[date] = Field(None, example="2025-02-10") #підказка як в swagger вводити дату 
+    
 
 class TaskCreate(TaskBase):    
     status: Literal["new", "in_progress", "done"] = "new"
@@ -40,6 +40,9 @@ class Task(TaskBase):
     id: int
     status: str
     category_id: int
+    user_id: int
+    created_at: datetime
+    updated_at: datetime 
     model_config = ConfigDict(from_attributes=True)
     
 
@@ -62,3 +65,17 @@ class DeletedCategory(BaseModel):
 
 class DeletedTasks(BaseModel):
     deleted_tasks: List[Task]
+    
+    
+class UserBase(BaseModel):
+    username: str
+    email: EmailStr
+
+class UserCreate(UserBase):
+    password: str
+
+class User(UserBase):
+    id: int
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
